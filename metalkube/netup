@@ -1,0 +1,4 @@
+sudo ifup enp59s0u2
+sudo ifup ifcfg-enp59s0u2.20
+sudo ifup ifcfg-enp59s0u2.30
+

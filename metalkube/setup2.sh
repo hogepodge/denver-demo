@@ -21,3 +21,11 @@ cd $GOPATH/src/github.com/metalkube
 git clone https://github.com/metalkube/baremetal-operator.git
 
 popd
+
+pushd ~/denver-demo/metalkube
+virtualenv .ironic
+source ./.ironic/bin/activate
+pip install diskimage-builder
+make
+deactivate
+popd

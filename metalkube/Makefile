@@ -7,8 +7,7 @@ MD5=$(addsuffix .md5sum,$(QCOW))
 IMAGEDIR=ironic/html/images
 VPATH=$(IMAGEDIR) ironic/html
 
-all: $(QCOW)
-	echo $(QCOW)
+all: $(QCOW) $(MD5)
 
 images:
 	mkdir -p ironic/html/images

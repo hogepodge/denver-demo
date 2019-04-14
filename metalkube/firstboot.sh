@@ -18,6 +18,7 @@ yum install -y \
 	python \
 	python-devel \
 	python-pip \
+	python-virtualenv \
 	qemu-kvm \
 	vim
 systemctl enable libvirtd.service

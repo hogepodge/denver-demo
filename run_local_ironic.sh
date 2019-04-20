@@ -10,21 +10,10 @@ sudo podman pull $IRONIC_IMAGE
 sudo podman pull $IRONIC_INSPECTOR_IMAGE
 
 mkdir -p "$IRONIC_DATA_DIR/html/images"
-pushd $IRONIC_DATA_DIR/html/images
 
 # The images directory should contain images and an associated md5sum.
 #   - image.qcow2
 #   - image.qcow2.md5sum
-
-for name in ironic ironic-inspector dnsmasq httpd mariadb; do
-    sudo podman ps | grep -w "$name$" && sudo podman kill $name
-    sudo podman ps --all | grep -w "$name$" && sudo podman rm $name -f
-done
-
-# Remove existing pod
-if  sudo podman pod exists ironic-pod ; then
-    sudo podman pod rm ironic-pod -f
-fi
 
 # set password for mariadb
 mariadb_password=$(echo $(date;hostname)|sha256sum |cut -c-20)
@@ -33,12 +22,9 @@ mariadb_password=$(echo $(date;hostname)|sha256sum |cut -c-20)
 sudo podman pod create -n ironic-pod
 
 # Some environment variables for the host system
-BMC_IP=192.168.20.2
-BMC_INTERFACE=enp59s0u2.20
-
 PROVISION_IP=192.168.30.2
 PROVISION_INTERFACE=enp59s0u2.30
-PROVISION_RANGE="192.168.30.200,192.168.30.220"
+PROVISION_RANGE="192.168.30.30,192.168.30.20"
 
 # Start dnsmasq, http, mariadb, and ironic containers using same image
 # See this file for env vars you can set, like IP, DHCP_RANGE, INTERFACE
@@ -47,9 +33,9 @@ sudo podman run -d --net host \
                    --privileged \
                    --name dnsmasq \
                    --pod ironic-pod \
-		   --env IP=${PROVISION_IP} \
-                   --env DHCP_RANGE=${PROVISION_RANGE} \
-                   --env INTERFACE=${PROVISION_INTERFACE} \
+		   --env IP=$PROVISION_IP \
+                   --env DHCP_RANGE=$PROVISION_RANGE \
+                   --env INTERFACE=$PROVISION_INTERFACE \
                    -v $IRONIC_DATA_DIR:/shared \
                    --entrypoint /bin/rundnsmasq ${IRONIC_IMAGE}
 
@@ -59,9 +45,10 @@ sudo podman run -d --net host \
 		--privileged \
 		--name httpd \
 		--pod ironic-pod \
-		--env IP=${PROVISION_IP} \
+		--env IP=$PROVISION_IP \
      		-v $IRONIC_DATA_DIR:/shared \
-		--entrypoint /bin/runhttpd ${IRONIC_IMAGE}
+		--entrypoint /bin/runhttpd \
+		${IRONIC_IMAGE}
 
 # https://github.com/metalkube/metalkube-ironic/blob/master/runmariadb.sh
 sudo podman run -d --net host \
@@ -70,7 +57,8 @@ sudo podman run -d --net host \
 		--pod ironic-pod \
      		-v $IRONIC_DATA_DIR:/shared \
 		--entrypoint /bin/runmariadb \
-     		--env MARIADB_PASSWORD=$mariadb_password ${IRONIC_IMAGE}
+     		--env MARIADB_PASSWORD=$mariadb_password \
+		${IRONIC_IMAGE}
 
 # See this file for additional env vars you may want to pass, like IP and INTERFACE
 # https://github.com/metalkube/metalkube-ironic/blob/master/runironic.sh
@@ -79,9 +67,14 @@ sudo podman run -d --net host \
 		--name ironic \
 		--pod ironic-pod \
      		--env MARIADB_PASSWORD=$mariadb_password \
-     		-v $IRONIC_DATA_DIR:/shared ${IRONIC_IMAGE} \
-		--env IP=${PROVISION_IP} \
-		--env INTERFACE={$PROVISION_INTERFACE}
+		--env IP=$PROVISION_IP \
+		--env INTERFACE=$PROVISION_INTERFACE \
+     		-v $IRONIC_DATA_DIR:/shared \
+		${IRONIC_IMAGE} 
 
 # Start Ironic Inspector
-sudo podman run -d --net host --privileged --name ironic-inspector --pod ironic-pod "${IRONIC_INSPECTOR_IMAGE}"
+sudo podman run -d --net host \
+		--privileged \
+		--name ironic-inspector \
+		--pod ironic-pod \
+		${IRONIC_INSPECTOR_IMAGE}

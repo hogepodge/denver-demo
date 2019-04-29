@@ -1,0 +1,70 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: node1-secret
+type: Opaque
+data:
+  username: QURNSU4=
+  password: aGFsZXItdmVzdC1oYWw=
+---
+apiVersion: metalkube.org/v1alpha1
+kind: BareMetalHost
+metadata:
+  name: node1
+spec:
+  online: true
+  bmc:
+    address: ipmi://192.168.20.11
+    credentialsName: node1-secret
+  bootMACAddress: ac:1f:6b:12:65:34
+  image:
+    url: "http://192.168.30.2/images/linux.qcow2"
+    checksum: "http://192.168.30.2/images/linux.qcow2.md5sum"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: node2-secret
+type: Opaque
+data:
+  username: QURNSU4=
+  password: aGFsZXItdmVzdC1oYWw=
+---
+apiVersion: metalkube.org/v1alpha1
+kind: BareMetalHost
+metadata:
+  name: node2
+spec:
+  online: false
+  bmc:
+    address: ipmi://192.168.20.12
+    credentialsName: node2-secret
+  bootMACAddress: 0c:c4:7a:ca:3b:2c
+  image:
+    url: "http://192.168.20.2/images/linux.qcow2"
+    checksum: "http://192.168.20.2/images/linux.qcow2.md5sum"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: node3-secret
+type: Opaque
+data:
+  username: QURNSU4=
+  password: aGFsZXItdmVzdC1oYWw=
+---
+apiVersion: metalkube.org/v1alpha1
+kind: BareMetalHost
+metadata:
+  name: node3
+spec:
+  online: true
+  bmc:
+    address: ipmi://192.168.20.13
+    credentialsName: node3-secret
+  bootMACAddress: 0c:c4:7a:9a:3c:cc
+  image:
+    url: "http://192.168.30.2/images/k8s.qcow2"
+    checksum: "http://192.168.30.2/images/k8s.qcow2.md5sum"
+

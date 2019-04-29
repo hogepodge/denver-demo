@@ -2,7 +2,7 @@
 
 set -ex
 
-IRONIC_IMAGE=${IRONIC_IMAGE:-"quay.io/metalkube/metalkube-ironic"}
+IRONIC_IMAGE=${IRONIC_IMAGE:-"quay.io/metal3-io/ironic:no-cleaning"}
 IRONIC_INSPECTOR_IMAGE=${IRONIC_INSPECTOR_IMAGE:-"quay.io/metalkube/metalkube-ironic-inspector"}
 IRONIC_DATA_DIR="$PWD/ironic"
 

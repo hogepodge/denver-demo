@@ -31,4 +31,14 @@ sudo tar -C /usr/local -xzf ${GONAME}
 
 echo "Set up your path"
 
+#GOPATH=$HOME/go
+#PATH=$PATH:$HOME/.local/bin:$HOME/bin:/usr/local/go/bin:$GOPATH/bin
+#METALPATH=$GOPATH/src/github.com/metalkube/baremetal-operator
+#
+#export OS_URL=http://localhost:6385/
+#export OS_TOKEN=ironic
+#export PATH
+#export GOPATH
+#export METALPATH
+
 popd

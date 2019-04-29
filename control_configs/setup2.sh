@@ -25,7 +25,7 @@ popd
 pushd ~/denver-demo/metalkube
 virtualenv .ironic
 source ./.ironic/bin/activate
-pip install diskimage-builder
+pip install diskimage-builder python-openstackclient python-ironicclient
 make
 deactivate
 popd
